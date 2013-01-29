@@ -4,7 +4,7 @@
 #------------------------------------------------------------------
 
 sbtdir=./sbtlib
-version="0.11.3"
+version="0.12.0"
 jarname="sbt-launch-$version.jar"
 if [ ! -d "$sbtdir" ] || [ ! -f "$sbtdir/$jarname" ]; then
     

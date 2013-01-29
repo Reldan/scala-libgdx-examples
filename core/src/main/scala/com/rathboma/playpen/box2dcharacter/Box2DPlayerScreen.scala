@@ -2,9 +2,7 @@ package com.rathboma.playpen.box2dcharacter
 
 import com.rathboma.playpen.PlaypenGame
 
-import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.{Gdx, Screen}
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.GL10
@@ -14,16 +12,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.{Vector3, Matrix4, MathUtils}
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import com.badlogic.gdx.physics.box2d.CircleShape
-import com.badlogic.gdx.physics.box2d.Contact
-import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.{PolygonShape, EdgeShape}
 import com.badlogic.gdx.physics.box2d.{World => Box2DWorld}
-import com.badlogic.gdx.physics.box2d.WorldManifold
-import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.graphics.Color
 
 
@@ -58,14 +50,14 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   def render(delta: Float) {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
     cam.position.set(player.position.x, player.position.y, 0)
-    cam.update
+    cam.update()
     cam.apply(Gdx.gl10)
     matrix.set(cam.combined)
     renderer.render(world, matrix)
     cam.project(point.set(player.position.x, player.position.y, 0))
     batch.begin()
     font.drawMultiLine(batch, 
-      "friction: " + player.physicsFixture.getFriction() + "\ngrounded: " + grounded,
+      "friction: " + player.physicsFixture.getFriction + "\ngrounded: " + grounded,
       point.x + 20, point.y)
     batch.end()
     update(delta)
@@ -82,7 +74,7 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
     player.limitVelocity()
 
     if(!leftPressed && !rightPressed) {
-      stillTime = stillTime + Gdx.graphics.getDeltaTime()
+      stillTime = stillTime + Gdx.graphics.getDeltaTime
       player.box.setLinearVelocity(player.velocity.x * 0.9f, player.velocity.y)
     }
 
@@ -100,8 +92,8 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
       player.sensorFixture.setFriction(0f)
     }
 
-    if (leftPressed) player.moveLeft
-    if (rightPressed) player.moveRight
+    if (leftPressed) player.moveLeft()
+    if (rightPressed) player.moveRight()
 
     if (shouldJump) {
       shouldJump = false
@@ -109,7 +101,7 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
         player.jump()
       }
     }
-    world.step(Gdx.graphics.getDeltaTime(), 4, 4)
+    world.step(Gdx.graphics.getDeltaTime, 4, 4)
     player.box.setAwake(true)
 
   }
@@ -128,7 +120,7 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
     false
   }
 
-  def createGround() = {
+  def createGround() {
     var y1 = 1f
     var y2 = y1
 
@@ -167,23 +159,23 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 
   }
 
-  def show {
+  def show() {
 
   }
 
-  def hide {
+  def hide() {
 
   }
 
-  def pause {
+  def pause() {
 
   }
 
-  def resume {
+  def resume() {
 
   }
 
-  def dispose {
+  def dispose() {
 
   }
 

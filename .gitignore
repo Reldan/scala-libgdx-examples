@@ -3,3 +3,5 @@ lib_managed/
 src_managed/
 project/boot/
 sbtlib
+.idea
+.idea_modules
