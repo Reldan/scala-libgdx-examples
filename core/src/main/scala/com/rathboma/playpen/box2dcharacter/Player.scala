@@ -38,7 +38,7 @@ class Player(world: Box2DWorld) {
   }
   box.setBullet(true)
 
-  box.setTransform(10.0f, 4.0f, 0)
+  box.setTransform(0.0f, 0.0f, 0)
   box.setFixedRotation(true)
 
   var lastGroundTime: Long = 0
@@ -82,6 +82,5 @@ class Player(world: Box2DWorld) {
       if (below) true else false
     } else false
   }
-
 
 }

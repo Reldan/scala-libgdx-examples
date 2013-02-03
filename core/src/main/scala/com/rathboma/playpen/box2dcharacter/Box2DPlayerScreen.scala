@@ -11,10 +11,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.{Vector3, Matrix4, MathUtils}
-import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
-import com.badlogic.gdx.physics.box2d.{PolygonShape, EdgeShape}
 import com.badlogic.gdx.physics.box2d.{World => Box2DWorld}
 import com.badlogic.gdx.graphics.Color
 
@@ -23,7 +21,9 @@ import com.badlogic.gdx.graphics.Color
 class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 
   val world = new Box2DWorld(new Vector2(0, -20), true)
+  val util = new Util(world)
   val player = new Player(world)
+  val glass = new TetrisGlass(util)
   val cam = new OrthographicCamera(28, 20)
   val renderer = new Box2DDebugRenderer()
   val matrix = new Matrix4()
@@ -39,18 +39,15 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   var grounded = false
   var stillTime = 0f
 
-  
+  glass.addBox(1, 1)
 
-  createGround()
   for(i <- 0 to 19) {
-    val box = createBox(BodyType.DynamicBody, MathUtils.random(), MathUtils.random(), 3)
-    box.setTransform(MathUtils.random() * 10f - MathUtils.random() * 10f, MathUtils.random() * 10 + 6, MathUtils.random() * 2 * MathUtils.PI)
+    val box = util.createBox(BodyType.DynamicBody, 0.5f, 0.5f, 3)
+    box.setTransform(0f, MathUtils.random() * 100 + 6, MathUtils.random() * 2 * MathUtils.PI)
   }
 
   def render(delta: Float) {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
-    cam.position.set(player.position.x, player.position.y, 0)
-    cam.update()
     cam.apply(Gdx.gl10)
     matrix.set(cam.combined)
     renderer.render(world, matrix)
@@ -119,41 +116,6 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
     if (keycode == Keys.D) rightPressed = false
     false
   }
-
-  def createGround() {
-    var y1 = 1f
-    var y2 = y1
-
-    for (i <- 0 until 49) {
-      val ground = createEdge(BodyType.StaticBody, -50 + i * 2, y1, -50 + i * 2 + 2, y2, 0)
-      y1 = y2
-      y2 = 1 //(float)Math.random() + 1;
-    }
-  }
-
-  def createEdge(t: BodyType, x1: Float, y1: Float, x2: Float, y2: Float, density: Float) = {
-    val bDef = new BodyDef
-    bDef.`type` = t
-    val box = world.createBody(bDef)
-    val poly = new EdgeShape()
-    poly.set(new Vector2(0, 0), new Vector2(x2 - x1, y2 - y1))
-    box.createFixture(poly, density)
-    box.setTransform(x1, y1, 0)
-    poly.dispose()
-    box
-  }
-
-  def createBox(bType: BodyType, width: Float, height: Float, density: Float) = {
-    val bDef = new BodyDef()
-    bDef.`type` = bType
-    val box = world.createBody(bDef)
-    val poly = new PolygonShape()
-    poly.setAsBox(width, height)
-    box.createFixture(poly, density)
-    poly.dispose()
-    box
-  }
-
 
   def resize(width: Int, height: Int) {
 
