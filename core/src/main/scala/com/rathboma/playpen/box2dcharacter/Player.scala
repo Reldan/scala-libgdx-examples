@@ -2,10 +2,8 @@ package com.rathboma.playpen.box2dcharacter
 
 
 import scalaj.collection.Imports._
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
-import com.badlogic.gdx.physics.box2d.CircleShape
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.{World => Box2DWorld}
 
@@ -16,7 +14,7 @@ class Player(world: Box2DWorld) {
 
   val box = {
     val bodyDef = new BodyDef()
-    bodyDef.`type` = BodyType.DynamicBody
+    bodyDef.`type` = BodyType.KinematicBody
     world.createBody(bodyDef)  
   }
   
@@ -28,14 +26,6 @@ class Player(world: Box2DWorld) {
     physicsFixture
   }
   
-  val sensorFixture = {
-    val circle = new CircleShape
-    circle.setRadius(0.45f)
-    circle.setPosition(new Vector2(0, -1.4f))
-    val sensorFixture = box.createFixture(circle, 0)
-    circle.dispose()
-    sensorFixture
-  }
   box.setBullet(true)
 
   box.setTransform(0.0f, 0.0f, 0)
@@ -53,26 +43,28 @@ class Player(world: Box2DWorld) {
 
   def jump() {
     box.setLinearVelocity(velocity.x, 0)
-    System.out.println("jump before: " + velocity)
     box.setTransform(position.x, position.y + 0.01f, 0)
     box.applyLinearImpulse(0, 30, position.x, position.y)
-    System.out.println("jump, " + velocity)
   }
 
   def moveLeft() { if (velocity.x > -MAX_VELOCITY) {
-      box.applyLinearImpulse(-2f, 0, position.x, position.y)
+    box.setTransform(position.x - 1f, position.y, 0)
+    box.applyLinearImpulse(-2f, 0, position.x, position.y)
     }
   }
 
-  def moveRight() { if (velocity.x < MAX_VELOCITY) {
-    box.applyLinearImpulse(2f, 0, position.x, position.y)
+  def moveDown() {
+    box.setTransform(position.x, position.y - 1f, 0)
   }
+
+  def moveRight() {
+    if (velocity.x < MAX_VELOCITY)
+      box.setTransform(position.x + 1f, position.y, 0)
+      box.applyLinearImpulse(2f, 0, position.x, position.y)
   }
 
   def isGrounded: Boolean = world.getContactList.asScala.exists{contact =>
-    if (contact.isTouching && (
-      contact.getFixtureA == sensorFixture ||
-      contact.getFixtureB == sensorFixture)) {
+    if (contact.isTouching) {
       val position = box.getPosition
       val manifold = contact.getWorldManifold
       var below = false

@@ -10,8 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.{Vector3, Matrix4, MathUtils}
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
+import com.badlogic.gdx.math.{Vector3, Matrix4}
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.{World => Box2DWorld}
 import com.badlogic.gdx.graphics.Color
@@ -20,6 +19,7 @@ import com.badlogic.gdx.graphics.Color
 
 class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 
+  var lastTick = System.nanoTime
   val world = new Box2DWorld(new Vector2(0, -20), true)
   val util = new Util(world)
   val player = new Player(world)
@@ -40,11 +40,14 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   var stillTime = 0f
 
   glass.addBox(1, 1)
+  glass.addBox(0, 0)
+  glass.addBox(2, 2)
+  glass.addBox(3, 3)
 
-  for(i <- 0 to 19) {
-    val box = util.createBox(BodyType.DynamicBody, 0.5f, 0.5f, 3)
-    box.setTransform(0f, MathUtils.random() * 100 + 6, MathUtils.random() * 2 * MathUtils.PI)
-  }
+//  for(i <- 0 to 19) {
+//    val box = util.createBox(BodyType.DynamicBody, 0.5f, 0.5f, 3)
+//    box.setTransform(0f, MathUtils.random() * 100 + 6, MathUtils.random() * 2 * MathUtils.PI)
+//  }
 
   def render(delta: Float) {
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
@@ -62,10 +65,10 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 
   def update(delta: Float) {
     val now = System.nanoTime
-    grounded = {
-      val g = player.isGrounded
-      if (g) player.lastGroundTime = now
-      g || now - player.lastGroundTime < 100000000
+    grounded = true
+    if ((now - lastTick) > 1000000000) {
+      player.moveDown()
+      lastTick = now
     }
 
     player.limitVelocity()
@@ -78,19 +81,20 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
     if (grounded) {
       if(leftPressed || rightPressed) {
         player.physicsFixture.setFriction(0.2f)
-        player.sensorFixture.setFriction(0.2f)
         stillTime = 0
       } else if(stillTime > 0.2) {
         player.physicsFixture.setFriction(100f)
-        player.sensorFixture.setFriction(100f)
       }
     } else {
       player.physicsFixture.setFriction(0f)
-      player.sensorFixture.setFriction(0f)
     }
 
-    if (leftPressed) player.moveLeft()
-    if (rightPressed) player.moveRight()
+    if (leftPressed)
+      player.moveLeft()
+      leftPressed = false
+    if (rightPressed)
+      player.moveRight()
+      rightPressed = false
 
     if (shouldJump) {
       shouldJump = false
