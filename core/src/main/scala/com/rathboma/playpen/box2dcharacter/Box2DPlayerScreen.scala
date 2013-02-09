@@ -22,7 +22,8 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   var lastTick = System.nanoTime
   val world = new Box2DWorld(new Vector2(0, -20), true)
   val util = new Util(world)
-  val player = new Player(world)
+  val backgroundFX = new BackgroundFXRenderer()
+//  val player = new Player(world)
   val glass = new TetrisGlass(util)
   val cam = new OrthographicCamera(28, 20)
   val renderer = new Box2DDebugRenderer()
@@ -39,10 +40,13 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   var grounded = false
   var stillTime = 0f
 
+//  glass.fill()
+
   glass.addBox(1, 1)
   glass.addBox(0, 0)
   glass.addBox(2, 2)
   glass.addBox(3, 3)
+  glass.addBox(3, 5, 2)
 
 //  for(i <- 0 to 19) {
 //    val box = util.createBox(BodyType.DynamicBody, 0.5f, 0.5f, 3)
@@ -50,61 +54,65 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 //  }
 
   def render(delta: Float) {
-    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
-    cam.apply(Gdx.gl10)
-    matrix.set(cam.combined)
-    renderer.render(world, matrix)
-    cam.project(point.set(player.position.x, player.position.y, 0))
+//    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
+//    cam.apply(Gdx.gl10)
+//    matrix.set(cam.combined)
+//    renderer.render(world, matrix)
+//    cam.project(point.set(player.position.x, player.position.y, 0))
+//    batch.begin()
+//    font.drawMultiLine(batch,
+//      "friction: " + player.physicsFixture.getFriction + "\ngrounded: " + grounded,
+//      point.x + 20, point.y)
+//    batch.end()
+    backgroundFX.render()
     batch.begin()
-    font.drawMultiLine(batch, 
-      "friction: " + player.physicsFixture.getFriction + "\ngrounded: " + grounded,
-      point.x + 20, point.y)
+    glass.draw(batch)
     batch.end()
-    update(delta)
+//    update(delta)
   }
 
   def update(delta: Float) {
     val now = System.nanoTime
     grounded = true
-    if ((now - lastTick) > 1000000000) {
-      player.moveDown()
-      lastTick = now
-    }
+//    if ((now - lastTick) > 1000000000) {
+//      player.moveDown()
+//      lastTick = now
+//    }
+//
+//    player.limitVelocity()
+//
+//    if(!leftPressed && !rightPressed) {
+//      stillTime = stillTime + Gdx.graphics.getDeltaTime
+//      player.box.setLinearVelocity(player.velocity.x * 0.9f, player.velocity.y)
+//    }
 
-    player.limitVelocity()
+//    if (grounded) {
+//      if(leftPressed || rightPressed) {
+//        player.physicsFixture.setFriction(0.2f)
+//        stillTime = 0
+//      } else if(stillTime > 0.2) {
+//        player.physicsFixture.setFriction(100f)
+//      }
+//    } else {
+//      player.physicsFixture.setFriction(0f)
+//    }
 
-    if(!leftPressed && !rightPressed) {
-      stillTime = stillTime + Gdx.graphics.getDeltaTime
-      player.box.setLinearVelocity(player.velocity.x * 0.9f, player.velocity.y)
-    }
-
-    if (grounded) {
-      if(leftPressed || rightPressed) {
-        player.physicsFixture.setFriction(0.2f)
-        stillTime = 0
-      } else if(stillTime > 0.2) {
-        player.physicsFixture.setFriction(100f)
-      }
-    } else {
-      player.physicsFixture.setFriction(0f)
-    }
-
-    if (leftPressed)
-      player.moveLeft()
-      leftPressed = false
-    if (rightPressed)
-      player.moveRight()
-      rightPressed = false
-
-    if (shouldJump) {
-      shouldJump = false
-      if (grounded) {
-        player.jump()
-      }
-    }
-    world.step(Gdx.graphics.getDeltaTime, 4, 4)
-    player.box.setAwake(true)
-
+//    if (leftPressed)
+//      player.moveLeft()
+//      leftPressed = false
+//    if (rightPressed)
+//      player.moveRight()
+//      rightPressed = false
+//
+//    if (shouldJump) {
+//      shouldJump = false
+//      if (grounded) {
+//        player.jump()
+//      }
+//    }
+//    world.step(Gdx.graphics.getDeltaTime, 4, 4)
+//    player.box.setAwake(true)
+//
   }
 
   override def keyDown(keycode: Int) = {
