@@ -5,8 +5,11 @@ import com.rathboma.playpen.Resources
 
 class Box(val x: Float, val y: Float, val Type: Byte = 1) extends Sprite {
   Type match {
-    case 1 => this.set(Resources.bomberP2)
-    case 2 => this.set(Resources.bomberP1)
+    case 1 => this.set(Resources.parquetSp)
+    case 2 => this.set(Resources.groundSp)
+    case 3 => this.set(Resources.mudSp)
+    case 4 => this.set(Resources.stoneSp)
+    case 5 => this.set(Resources.grassSp)
   }
 
   override def draw(spriteBatch: SpriteBatch) {

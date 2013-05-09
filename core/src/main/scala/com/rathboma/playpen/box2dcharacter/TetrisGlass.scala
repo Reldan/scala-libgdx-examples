@@ -2,11 +2,12 @@ package com.rathboma.playpen.box2dcharacter
 
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import scala.util.Random
 
 class TetrisGlass (val util: Util) {
-  val WIDTH = 11
-  val HEIGHT = 20
-  val BOX_SIDE_PX = 20f
+  val WIDTH = 74
+  val HEIGHT = 44
+  val BOX_SIDE_PX = 16f
   val WIDTH_PX = BOX_SIDE_PX * WIDTH
   val HEIGHT_PX = BOX_SIDE_PX * HEIGHT
   val width = WIDTH_PX
@@ -34,7 +35,12 @@ class TetrisGlass (val util: Util) {
   }
 
   def fill() {
-    for(column <- 0 until WIDTH; row <- 0 until HEIGHT)
-      addBox(column, row)
+    for(column <- 0 until WIDTH; row <- 0 until HEIGHT) {
+      addBox(column, row, (Random.nextInt(5) + 1).toByte)
+    }
+  }
+
+  def tick() {
+
   }
 }

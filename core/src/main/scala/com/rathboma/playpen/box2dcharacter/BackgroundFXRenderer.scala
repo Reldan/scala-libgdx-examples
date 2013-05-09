@@ -13,7 +13,7 @@ class BackgroundFXRenderer {
   val backgroundBatch = new SpriteBatch()
   backgroundFXBatch.getProjectionMatrix().setToOrtho2D(0, 0, 800, 480)
 
-  val background = Resources.background
+  val background = Resources.groundSp
 
 
   //  createDebris()
