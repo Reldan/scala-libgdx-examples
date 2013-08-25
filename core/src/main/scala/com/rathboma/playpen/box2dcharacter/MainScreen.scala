@@ -1,6 +1,5 @@
 package com.rathboma.playpen.box2dcharacter
 
-import com.rathboma.playpen.PlaypenGame
 
 import com.badlogic.gdx.{Gdx, Screen}
 import com.badlogic.gdx.Input.Keys
@@ -14,16 +13,17 @@ import com.badlogic.gdx.math.{Vector3, Matrix4}
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer
 import com.badlogic.gdx.physics.box2d.{World => Box2DWorld}
 import com.badlogic.gdx.graphics.Color
+import com.daggerfrog._
+import com.daggerfrog.Room
+import com.daggerfrog.Defender
 
 
-
-class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
+class MainScreen(game: PlaypenGame) extends InputAdapter with Screen {
   var lastTick = System.nanoTime
   val world = new Box2DWorld(new Vector2(0, -20), true)
   val util = new Util(world)
   val backgroundFX = new BackgroundFXRenderer()
 //  val player = new Player(world)
-  val glass = new TetrisGlass(util)
   val cam = new OrthographicCamera(28, 20)
   val renderer = new Box2DDebugRenderer()
   val matrix = new Matrix4()
@@ -34,8 +34,25 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
   Gdx.input.setInputProcessor(this)
   // VARS
   var stillTime = 0f
+  val battlefield = new Battlefield()
+
+  battlefield.addDefender(Soldier(10, 10))
+  battlefield.addDefender(Soldier(5, 10))
+  battlefield.addDefender(Soldier(15, 15))
+
+  val glass = new MainMap(util, 100, 60)
+
+  val defenders = List(Defender(10, 10))
+
+  //place to config
+  val rooms = List(
+    new Room(0, 0, 99, 59)
+  )
 
   glass.fill()
+
+  rooms.foreach(t ⇒ glass.setRoom(t))
+  defenders.foreach(t ⇒ glass.addBox(t.x1, t.y1, 6))
 
 //  glass.addBox(1, 1)
 //  glass.addBox(0, 0)
@@ -52,9 +69,10 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
 //  }
 
   def render(delta: Float) {
-//    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
-//    cam.apply(Gdx.gl10)
-//    matrix.set(cam.combined)
+    battlefield.defenders.foreach(t ⇒ glass.addBox(t.x, t.y, 6))
+    Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
+    cam.apply(Gdx.gl10)
+    matrix.set(cam.combined)
 //    renderer.render(world, matrix)
 //    cam.project(point.set(player.position.x, player.position.y, 0))
 //    batch.begin()
@@ -66,14 +84,17 @@ class Box2DPlayerScreen(game: PlaypenGame) extends InputAdapter with Screen {
     batch.begin()
     glass.draw(batch)
     batch.end()
-//    update(delta)
+    update(delta)
   }
 
   def update(delta: Float) {
     val now = System.nanoTime
-    if ((now - lastTick) > 1000000000) {
+    if ((now - lastTick) > 1000000) {
 //      player.moveDown()
-//      lastTick = now
+      lastTick = now
+      println("tick")
+      battlefield.move()
+//      battlefield.defenders.foreach(t ⇒ t.moveRandom)
       glass.tick()
     }
 //

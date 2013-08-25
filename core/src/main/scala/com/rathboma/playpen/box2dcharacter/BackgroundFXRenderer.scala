@@ -2,7 +2,7 @@ package com.rathboma.playpen.box2dcharacter
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector3
-import com.rathboma.playpen.Resources
+import com.daggerfrog.Resources
 
 class BackgroundFXRenderer {
 
