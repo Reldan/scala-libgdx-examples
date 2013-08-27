@@ -15,7 +15,8 @@ object Resources {
 //  val credits = new Sprite(new Texture(Gdx.files.internal("data/spritepack/credits.png")))
   // Sprite sprite = atlas.createSprite("otherimagename")
 
-  val soldier = new Sprite(new Texture(Gdx.files.internal("data/spritepack/soldier.png"))).
+  val soldier  = new Sprite(new Texture(Gdx.files.internal("data/spritepack/soldier.png")))
+  val soldierMap = new TextureAtlas(Gdx.files.internal("data/spritepack/soldier"))
   val map = new TextureAtlas(Gdx.files.internal("data/spritepack/packhigh"))
 //  throw new Exception(new java.io.File(".").getAbsolutePath)
 
@@ -29,5 +30,7 @@ object Resources {
   val stoneSp   = map.createSprite("stone")
   val mudSp     = map.createSprite("mud")
   val grassSp   = map.createSprite("grass")
+
+  val soldiers = List("soldier1", "soldier2", "soldier3", "soldier4").map(t ⇒ soldierMap.createSprite(t))
 
 }

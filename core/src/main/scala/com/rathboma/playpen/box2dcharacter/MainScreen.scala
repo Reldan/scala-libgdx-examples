@@ -33,16 +33,14 @@ class MainScreen(game: PlaypenGame) extends InputAdapter with Screen {
   val point = new Vector3()
   Gdx.input.setInputProcessor(this)
   // VARS
+  val BOX_SIDE_PX = 16f
   var stillTime = 0f
   val battlefield = new Battlefield()
+  val rand = scala.util.Random
 
-  battlefield.addDefender(Soldier(10, 10))
-  battlefield.addDefender(Soldier(5, 10))
-  battlefield.addDefender(Soldier(15, 15))
+  Range(1, 20).foreach(_ ⇒ battlefield.addDefender(Soldier(rand.nextInt(100), rand.nextInt(60))))
 
   val glass = new MainMap(util, 100, 60)
-
-  val defenders = List(Defender(10, 10))
 
   //place to config
   val rooms = List(
@@ -52,24 +50,8 @@ class MainScreen(game: PlaypenGame) extends InputAdapter with Screen {
   glass.fill()
 
   rooms.foreach(t ⇒ glass.setRoom(t))
-  defenders.foreach(t ⇒ glass.addBox(t.x1, t.y1, 6))
-
-//  glass.addBox(1, 1)
-//  glass.addBox(0, 0)
-//  glass.addBox(2, 2)
-//  glass.addBox(3, 3)
-//  glass.addBox(4, 5, 2)
-//  glass.addBox(5, 5, 2)
-//  glass.addBox(2, 5, 2)
-//  glass.addBox(3, 5, 2)
-
-//  for(i <- 0 to 19) {
-//    val box = util.createBox(BodyType.DynamicBody, 0.5f, 0.5f, 3)
-//    box.setTransform(0f, MathUtils.random() * 100 + 6, MathUtils.random() * 2 * MathUtils.PI)
-//  }
 
   def render(delta: Float) {
-    battlefield.defenders.foreach(t ⇒ glass.addBox(t.x, t.y, 6))
     Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT)
     cam.apply(Gdx.gl10)
     matrix.set(cam.combined)
@@ -83,13 +65,14 @@ class MainScreen(game: PlaypenGame) extends InputAdapter with Screen {
     backgroundFX.render()
     batch.begin()
     glass.draw(batch)
+    battlefield.defenders.foreach(t ⇒ t.draw(batch))
     batch.end()
     update(delta)
   }
 
   def update(delta: Float) {
     val now = System.nanoTime
-    if ((now - lastTick) > 1000000) {
+    if ((now - lastTick) > 100000000) {
 //      player.moveDown()
       lastTick = now
       println("tick")

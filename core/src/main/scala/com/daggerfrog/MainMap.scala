@@ -34,8 +34,16 @@ class MainMap (val util: Util, widthBox: Int, heightBox: Int) {
   def draw(spriteBatch: SpriteBatch) {
     for(column <- 0 until widthBox; row <- 0 until heightBox) {
       val box = boxes(column)(row)
+      val sprite = box match {
+        case 1 => Resources.parquetSp
+        case 2 => Resources.groundSp
+        case 3 => Resources.mudSp
+        case 4 => Resources.stoneSp
+        case 5 => Resources.grassSp
+        case 6 ⇒  Resources.soldier
+      }
       if (box > 0)
-        new Box(column * BOX_SIDE_PX, row * BOX_SIDE_PX, box).draw(spriteBatch, 10f)
+        new Box(column * BOX_SIDE_PX, row * BOX_SIDE_PX, sprite).draw(spriteBatch, 10f)
     }
   }
 
